@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -35,7 +36,6 @@ public class Level7Scene extends IScene implements BitmapOnDrawListener {
 		clipPath = new Path();
 		rect = new Rect();
 		specialRedHeart = new Rect();
-		setmLastTime(6000);
 	}
 
 	public Level7Scene(Context context, int width, int height) {
@@ -43,7 +43,6 @@ public class Level7Scene extends IScene implements BitmapOnDrawListener {
 		clipPath = new Path();
 		rect = new Rect();
 		specialRedHeart = new Rect();
-		setmLastTime(6000);
 	}
 
 	private void initData() {
@@ -60,18 +59,12 @@ public class Level7Scene extends IScene implements BitmapOnDrawListener {
 			BitmapShape bg = new BitmapShape(bitmap, this);
 			ElfFactory.endowBackgroup(bg, 1f, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2);
 			bg.setEnableMatrix(true);
-			
-			bitmap = BitmapUtils.decodeBitmap(mContext, R.drawable.level_7_bg_front);
-			if (bitmap != null) {
-				bitmapShape = new BitmapShape(bitmap, this);
-				ElfFactory.endowBackgroupBack(bitmapShape, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2, 0f,.1f );
-				addShape(bitmapShape);
-			}
-			
 			//初始化背景里渐变的
 			bitmap = BitmapUtils.decodeBitmap(mContext, R.drawable.level_7_bg_bg);
 			if (bitmap != null) {
 				bitmapShape = new BitmapShape(bitmap, this);
+				//debug测试使用
+//				bitmapShape.setBitmapOnDrawListener(this);
 
 				ElfFactory.endowBackgroupBack2(bitmapShape, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2, 0f, 0.2f, 0.8f, 1);
 				addShape(bitmapShape);
@@ -150,7 +143,7 @@ public class Level7Scene extends IScene implements BitmapOnDrawListener {
 		}
 
 		if (sceneInfo != null) {
-			GiftInfoElement element = new GiftInfoElement(this, sceneInfo,mBGRect);
+			GiftInfoElement element = new GiftInfoElement(this, sceneInfo);
 			addShape(element);
 		}
 
@@ -187,8 +180,20 @@ public class Level7Scene extends IScene implements BitmapOnDrawListener {
 
 	@Override
 	public boolean draw(Canvas canvas, Matrix matrix, Paint paint, Bitmap bitmap, int timeDifference) {
-		canvas.clipPath(clipPath);
-		return true;
+		testPaint.setColor(Color.RED);
+		testPaint.setStyle(Paint.Style.STROKE);
+		canvas.save();
+//		canvas.clipPath(clipPath);
+//		canvas.drawPath(clipPath, paint);
+		canvas.drawRect(mBGRect, testPaint);
+		canvas.drawPath(clipPath, testPaint);
+		canvas.drawRect(rect, testPaint);
+		canvas.drawRect(specialRedHeart, testPaint);
+		canvas.drawBitmap(bitmap, matrix, paint);
+		
+		canvas.restore();
+
+		return false;
 	}
 
 	@Override

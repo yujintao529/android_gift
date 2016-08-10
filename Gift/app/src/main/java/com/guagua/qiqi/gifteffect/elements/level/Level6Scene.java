@@ -4,8 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.Rect;
@@ -40,7 +42,6 @@ public class Level6Scene extends IScene implements BitmapOnDrawListener {
 		rect = new Rect();
 		specialRedHeart = new Rect();
 		person = new Rect();
-		setmLastTime(5000);
 	}
 
 	public Level6Scene(Context context, int width, int height) {
@@ -49,7 +50,6 @@ public class Level6Scene extends IScene implements BitmapOnDrawListener {
 		rect = new Rect();
 		specialRedHeart = new Rect();
 		person = new Rect();
-		setmLastTime(5000);
 	}
 
 	private void initData() {
@@ -64,14 +64,10 @@ public class Level6Scene extends IScene implements BitmapOnDrawListener {
 			setBGRect(rect);
 			//初始化背景数据
 			BitmapShape bg = new BitmapShape(bitmap, this);
-			ElfFactory.endowBackgroup(bg, 1f,rect.left, rect.top);
-			bitmap = BitmapUtils.decodeBitmap(mContext, R.drawable.level_6_bg_front);
-			if (bitmap != null) {
-				bitmapShape = new BitmapShape(bitmap, this);
-				ElfFactory.endowBackgroupBack(bitmapShape, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2, 0f,.1f );
-				addShape(bitmapShape);
-			}
+			ElfFactory.endowBackgroup(bg, 1f, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2);
 			initClipPathAndRect();
+			//测试
+//			bg.setBitmapOnDrawListener(this);
 			bitmap = BitmapUtils.decodeBitmap(mContext, R.drawable.level_6_rose);
 			if (bitmap != null) {
 				initRose(bitmap);
@@ -156,6 +152,7 @@ public class Level6Scene extends IScene implements BitmapOnDrawListener {
 			for (int i = 0; i < 15; i++) {
 				bitmapShape = new BitmapShape(bitmap, this);
 				ElfFactory.endowBubbleUp(bitmapShape, MathCommonAlg.randomFloat(0.2f, 0.5f), rect);
+//				bitmapShape.setBitmapOnDrawListener(this);
 				addShape(bitmapShape);
 			}
 		}
@@ -165,14 +162,14 @@ public class Level6Scene extends IScene implements BitmapOnDrawListener {
 		if (bitmap != null) {
 			for (int i = 0; i < 6; i++) {
 				bitmapShape = new BitmapShape(bitmap, this);
-				ElfFactory.endowLevelStar(bitmapShape, rect.left + PXUtils.dp2px(mContext, 16 + i * 10), rect.top - PXUtils.dp2px(mContext, 3),
+				ElfFactory.endowLevelStar(bitmapShape, rect.left + PXUtils.dp2px(mContext, 15 + i * 10), rect.top - PXUtils.dp2px(mContext, 5),
 						mContext);
 				addShape(bitmapShape);
 			}
 		}
 
 		if (sceneInfo != null) {
-			GiftInfoElement element = new GiftInfoElement(this, sceneInfo,mBGRect);
+			GiftInfoElement element = new GiftInfoElement(this, sceneInfo);
 			addShape(element);
 		}
 		bitmap = null;
@@ -180,10 +177,9 @@ public class Level6Scene extends IScene implements BitmapOnDrawListener {
 
 	private void initClipPathAndRect() {
 		rect.set(mBGRect);
-		rect.left = rect.left + PXUtils.dp2px(mContext,10);
-		rect.right = rect.right - PXUtils.dp2px(mContext, 6);
+		rect.left = rect.left + PXUtils.dp2px(mContext, 8);
+		rect.right = rect.right - PXUtils.dp2px(mContext, 8);
 		rect.top = rect.top + PXUtils.dp2px(mContext, 8);
-		rect.bottom=rect.bottom-PXUtils.dp2px(mContext, 2);
 		clipPath.addRoundRect(new RectF(rect),
 				new float[] { PXUtils.dp2px(mContext, 10), PXUtils.dp2px(mContext, 10), PXUtils.dp2px(mContext, 12), PXUtils.dp2px(mContext, 12),
 						PXUtils.dp2px(mContext, 30), PXUtils.dp2px(mContext, 40), PXUtils.dp2px(mContext, 40), PXUtils.dp2px(mContext, 28) },
@@ -258,10 +254,25 @@ public class Level6Scene extends IScene implements BitmapOnDrawListener {
 		super.onAfterShow();
 	}
 
+	Paint testPaint = new Paint();
+
 	@Override
 	public boolean draw(Canvas canvas, Matrix matrix, Paint paint, Bitmap bitmap, int timeDifference) {
-		canvas.clipPath(clipPath);
-		return true;
+		testPaint.setColor(Color.RED);
+		testPaint.setStyle(Style.STROKE);
+		canvas.save();
+//		canvas.clipPath(clipPath);
+//		canvas.drawPath(clipPath, paint);
+//		canvas.drawRect(mBGRect, testPaint);
+//		canvas.drawPath(clipPath, testPaint);
+//		canvas.drawRect(rect, testPaint);
+//		canvas.drawRect(specialRedHeart,testPaint);
+		canvas.drawRect(person, testPaint);
+		canvas.drawBitmap(bitmap, matrix, paint);
+
+		canvas.restore();
+
+		return false;
 	}
 
 	@Override

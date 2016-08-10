@@ -20,13 +20,11 @@ import com.guagua.qiqi.gifteffect.animation.algorithm.MulStaticCal;
 import com.guagua.qiqi.gifteffect.animation.algorithm.NeedleRotation;
 import com.guagua.qiqi.gifteffect.animation.algorithm.OffsetCal;
 import com.guagua.qiqi.gifteffect.animation.algorithm.RandomRangeAWhile;
-import com.guagua.qiqi.gifteffect.animation.algorithm.RangeCommon;
 import com.guagua.qiqi.gifteffect.animation.algorithm.StandarCal;
 import com.guagua.qiqi.gifteffect.animation.algorithm.StaticValue;
 import com.guagua.qiqi.gifteffect.animation.algorithm.TimeLoop;
 import com.guagua.qiqi.gifteffect.animation.algorithm.TimeLoop2;
 import com.guagua.qiqi.gifteffect.animation.algorithm.Wave2;
-import com.guagua.qiqi.gifteffect.animation.algorithm.EnumConStant.MulEndMode;
 import com.guagua.qiqi.gifteffect.elements.BitmapShape;
 import com.guagua.qiqi.gifteffect.elements.CircleShape;
 import com.guagua.qiqi.gifteffect.elements.Element;
@@ -55,7 +53,7 @@ public class ElfFactory {
 		caculateCommonHandle.c_scale = StaticValue.build(1);
 		caculateCommonHandle.c_alpha = TimeLoop2.build(1, 255, 0.8f, 1f);
 		bitmapShape.setCaculateCommonHandle(caculateCommonHandle);
-		bitmapShape.setStartOffset(800);
+		bitmapShape.setStartOffset(MathCommonAlg.rangeRandom(0, 2000));
 		bitmapShape.setPeriod(2000);
 		bitmapShape.setBlank(MathCommonAlg.rangeRandom(1, 2000));
 
@@ -78,7 +76,7 @@ public class ElfFactory {
 		caculateCommonHandle.c_scale = StaticValue.build(1);
 		caculateCommonHandle.c_alpha = TimeLoop2.build(1, 255, 0.8f, 1f);
 		bitmapShape.setCaculateCommonHandle(caculateCommonHandle);
-		bitmapShape.setStartOffset(800);
+		bitmapShape.setStartOffset(MathCommonAlg.rangeRandom(1000, 2000));
 		bitmapShape.setPeriod(2000);
 		bitmapShape.setBlank(MathCommonAlg.rangeRandom(1000, 2000));
 
@@ -100,22 +98,16 @@ public class ElfFactory {
 
 	/**
 	 * level7中闪烁的星星
-	 * @param bitmapShape 图形
-	 * @param scale 缩放比例
-	 * @param time 变化的时间周期
-	 * @param rect
-	 * @param startAlpha
-	 * @return: void
-	*/
-	public static void endowAnyWhereAlpha2(BitmapShape bitmapShape, float scale, float  time, Rect rect, float startAlpha) {
+	 */
+	public static void endowAnyWhereAlpha2(BitmapShape bitmapShape, float scale, int time, Rect rect, float startAlpha) {
 		CaculateCommonHandle caculateCommonHandle = new CaculateCommonHandle();
 		caculateCommonHandle.c_x = RandomRangeAWhile.build(rect.left, rect.right, time);
 		caculateCommonHandle.c_y = RandomRangeAWhile.build(rect.top, rect.bottom, time);
 		caculateCommonHandle.initComRotation(0, 0, 0, 0);//不旋转
 		caculateCommonHandle.initComScale(0f, 0f, scale, scale);//
-		caculateCommonHandle.c_alpha = TimeLoop2.build(time,255, 0, startAlpha);
+		caculateCommonHandle.c_alpha = TimeLoop2.build(time, 255, 0, startAlpha);
 		bitmapShape.setCaculateCommonHandle(caculateCommonHandle);
-		bitmapShape.setStartOffset(MathCommonAlg.rangeRandom(500, 3000));
+		bitmapShape.setStartOffset(MathCommonAlg.rangeRandom(0, 2000));
 	}
 
 	/**
@@ -255,6 +247,24 @@ public class ElfFactory {
 		bitmapShape.setCaculateCommonHandle(caculateCommonHandle);
 	}
 
+	/**
+	 *  每个级别背景不一样大小。默认缩放大小为1
+	 * @param element el
+	 * @param startX  x位置
+	 * @param startY  y位置
+	 * @param startScale  波动的最小值，1＋最小值，就是背景的最小缩放值
+	 * @param endScale 波动的最大值，1+最大值，就是背景的最大值缩放值
+	 */
+	public static void endowBackgroupBack2(Element element, float startX, float startY, float startScale, float endScale, float startAlpha,
+			float endAlpha) {
+		CaculateCommonHandle caculateCommonHandle = new CaculateCommonHandle();
+		caculateCommonHandle.c_x = StaticValue.build(startX);
+		caculateCommonHandle.c_y = StaticValue.build(startY);
+		caculateCommonHandle.c_rotation = StaticValue.build(0);
+		caculateCommonHandle.c_scale = Wave2.build(1, 1, startScale, endScale, 1f / 2f);
+		caculateCommonHandle.c_alpha = TimeLoop2.build(2, 255, startAlpha, endAlpha);
+		element.setCaculateCommonHandle(caculateCommonHandle);
+	}
 
 	/**
 	 *  每个级别背景不一样大小。默认缩放大小为1
@@ -273,23 +283,7 @@ public class ElfFactory {
 		caculateCommonHandle.c_alpha = TimeLoop2.build(2, 255, 0.6f, 1);
 		element.setCaculateCommonHandle(caculateCommonHandle);
 	}
-	/**
-	 *  每个级别背景不一样大小。默认缩放大小为1
-	 * @param element el
-	 * @param startX  x位置
-	 * @param startY  y位置
-	 * @param startScale  波动的最小值，1＋最小值，就是背景的最小缩放值
-	 * @param endScale 波动的最大值，1+最大值，就是背景的最大值缩放值
-	 */
-	public static void endowBackgroupBack2(Element element, float startX, float startY, float startScale, float endScale,float startAlpha,float endAlpha) {
-		CaculateCommonHandle caculateCommonHandle = new CaculateCommonHandle();
-		caculateCommonHandle.c_x = StaticValue.build(startX);
-		caculateCommonHandle.c_y = StaticValue.build(startY);
-		caculateCommonHandle.c_rotation = StaticValue.build(0);
-		caculateCommonHandle.c_scale = Wave2.build(1, 1, startScale, endScale, 1f / 2f);
-		caculateCommonHandle.c_alpha = TimeLoop2.build(2, 255,startAlpha,endAlpha);
-		element.setCaculateCommonHandle(caculateCommonHandle);
-	}
+
 	/**
 	 *
 	 * @param element 元素
@@ -492,7 +486,7 @@ public class ElfFactory {
 		}
 		caculateCommonHandle.c_scale_x = Wave2.build(1, 1, -0.8f, 0f, 5f);
 		bitmapShape.setCaculateCommonHandle(caculateCommonHandle);
-		bitmapShape.setStartOffset(MathCommonAlg.rangeRandom(0, 800));
+		bitmapShape.setStartOffset(MathCommonAlg.rangeRandom(0, 3000));
 		bitmapShape.setPeriod(4000);
 		bitmapShape.setBlank(MathCommonAlg.rangeRandom(20, 2000));
 	}
@@ -923,11 +917,11 @@ public class ElfFactory {
 		caculateCommonHandle.c_y = CommonX.build(bottom - PXUtils.dp2px(context, 2), MathCommonAlg.randomFloat(5, 20) / -1000);
 		caculateCommonHandle.c_rotation = StaticValue.build(0);
 		caculateCommonHandle.c_scale = StaticValue.build(MathCommonAlg.randomFloat(0.2f, 1));
-		caculateCommonHandle.c_alpha = StandarCal.build(200, -100);
+		caculateCommonHandle.c_alpha = StaticValue.build(255);
 		paintShape.setCaculateCommonHandle(caculateCommonHandle);
 		paintShape.setPeriod(MathCommonAlg.rangeRandom(4000, 6000));
-		paintShape.setBlank(MathCommonAlg.rangeRandom(400, 1000));
-		paintShape.setStartOffset(MathCommonAlg.rangeRandom(400, 2000));
+		paintShape.setBlank(MathCommonAlg.rangeRandom(0, 2000));
+		paintShape.setStartOffset(MathCommonAlg.rangeRandom(0000, 3000));
 	}
 
 	/**
@@ -1151,134 +1145,5 @@ public class ElfFactory {
 		bitmapShape.setBlank(500);
 		bitmapShape.setStartOffset((int) (500 + MathCommonAlg.rangeRandom(200, 1000)));
 	}
-	
-	
-	/**
-	 * TODO
-	 * @param light
-	 * @param rect
-	 * @param offsetTime
-	 * @param duration
-	 * @return: void
-	*/
-	public static void endowLevel10DownLight(BitmapShape light,Rect rect,int offsetTime,int duration){
-		CaculateCommonHandle caculateCommonHandle = new CaculateCommonHandle();
-		final int left = rect.left;
-		final int top = rect.top;
-		final int right = rect.right;
-		final int bottom = rect.bottom;
-		final int width = rect.width();
-		final int height = rect.height();
-		duration=duration+MathCommonAlg.rangeRandom(0, 1000);
-		caculateCommonHandle.c_x =StaticValue.build(MathCommonAlg.rangeRandom(rect.left, rect.right));
-		caculateCommonHandle.c_y =RangeCommon.build(0,top+MathCommonAlg.rangeRandom(0,height/2),duration);//StandarCal.build(0, MathCommonAlg.rangeRandom(400, 800));
-		caculateCommonHandle.c_rotation = StaticValue.build(0);
-		caculateCommonHandle.c_scale = StaticValue.build(1);
-		caculateCommonHandle.c_alpha =RangeCommon.build(255, 0, duration);
-		light.setCaculateCommonHandle(caculateCommonHandle);
-		int blank=MathCommonAlg.rangeRandom(0,50);
-		light.setBlank(blank);
-		light.setPeriod(duration);
-		light.setDuration(duration*2 + blank);
-		light.setStartOffset(offsetTime+MathCommonAlg.rangeRandom(0, 1000));
-	}
 
-	/**
-	 * level10中星云测试
-	 * @param rect
-	 * @return: void
-	*/
-	public static void endowLevel10Clouds(BitmapShape x1,BitmapShape x2,BitmapShape x3,Rect rect){
-		final int left = rect.left;
-		final int top = rect.top;
-		final int right = rect.right;
-		final int bottom = rect.bottom;
-		final int width = rect.width();
-		final int height = rect.height();
-		CaculateCommonHandle caculateCommonHandle = new CaculateCommonHandle();
-		caculateCommonHandle.c_x =StaticValue.build(left);
-		caculateCommonHandle.c_y =StaticValue.build(right);
-		caculateCommonHandle.c_rotation = StaticValue.build(0);
-		caculateCommonHandle.c_scale = StaticValue.build(1);
-		caculateCommonHandle.c_alpha = TimeLoop2.build(0.2f,255,0.2f,1);
-		x1.setCaculateCommonHandle(caculateCommonHandle);
-		x1.setDuration(2000);
-		x1.setStartOffset(MathCommonAlg.rangeRandom(1000, 3000));
-		caculateCommonHandle = new CaculateCommonHandle();
-		caculateCommonHandle.c_x =StaticValue.build(left);
-		caculateCommonHandle.c_y =StaticValue.build(right);
-		caculateCommonHandle.c_rotation = StaticValue.build(0);
-		caculateCommonHandle.c_scale = StaticValue.build(1);
-		caculateCommonHandle.c_alpha = TimeLoop2.build(0.3f,255,0.2f,1);
-		x2.setCaculateCommonHandle(caculateCommonHandle);
-		x2.setDuration(2000);
-		x2.setStartOffset(MathCommonAlg.rangeRandom(1000, 3000));
-		caculateCommonHandle = new CaculateCommonHandle();
-		caculateCommonHandle.c_x =StaticValue.build(left);
-		caculateCommonHandle.c_y =StaticValue.build(right);
-		caculateCommonHandle.c_rotation = StaticValue.build(0);
-		caculateCommonHandle.c_scale = StaticValue.build(1);
-		caculateCommonHandle.c_alpha = TimeLoop2.build(0.4f,255,0.2f,1);
-		x3.setCaculateCommonHandle(caculateCommonHandle);
-		x3.setDuration(2000);
-		x3.setStartOffset(MathCommonAlg.rangeRandom(1000, 3000));
-	}
-
-	/**
-	 * level8中横向光的使用
-	 * @param light
-	 * @param rect
-	 * @param startOffsetTime
-	 * @param duration
-	 * @return: void
-	*/
-	public static void endowLevel10RowLight(BitmapShape light,Rect rect,int startOffsetTime,int duration){
-		CaculateCommonHandle caculateCommonHandle = new CaculateCommonHandle();
-		final int left = rect.left;
-		final int top = rect.top;
-		final int right = rect.right;
-		final int bottom = rect.bottom;
-		final int width = rect.width();
-		final int height = rect.height();
-		final int l= (int) ((width-light.getBitmapWidth())/2);
-		caculateCommonHandle.c_x =StaticValue.build(l);
-		caculateCommonHandle.c_y =MulSimpleCal.build(new int[]{1000,1000,500},new float[]{-height,height,-height/2},bottom-height/2,MulEndMode.WITH_END_VALUE);//RangeCommon.build(, top-height/2, duration);
-		caculateCommonHandle.c_rotation = StaticValue.build(0);
-		caculateCommonHandle.c_scale_y = MulSimpleCal.build(new int[]{2500, 400},new float[]{0,-1},1,MulEndMode.WITH_END_VALUE);
-//		caculateCommonHandle.c_scale_x = MulSimpleCal.build(new int[]{2500, 500},new float[]{0,-1},1,MulEndMode.WITH_END_VALUE);
-		caculateCommonHandle.c_alpha = MulSimpleCal.build(new int[]{2500, 400},new float[]{0,-255},255,MulEndMode.WITH_END_VALUE);
-		light.setCaculateCommonHandle(caculateCommonHandle);
-		light.setDuration(duration);
-
-		light.setStartOffset(startOffsetTime);
-	}
-	
-	
-	/**
-	 * level10级
-	 * @param bitmapShape
-	 * @param rect
-	 * @param time 一次持续时间
-	 * @param startOffsetTime
-	 * @param duration
-	 * @return: void
-	*/
-	public static void endowLevel10AlphaStars(BitmapShape bitmapShape,Rect rect,float time,int startOffsetTime,int duration){
-		CaculateCommonHandle caculateCommonHandle = new CaculateCommonHandle();
-		final int left = rect.left;
-		final int top = rect.top;
-		final int right = rect.right;
-		final int bottom = rect.bottom;
-		final int width = rect.width();
-		final int height = rect.height();
-		caculateCommonHandle.c_x = RandomRangeAWhile.build(rect.left, rect.right, time);
-		caculateCommonHandle.c_y = RandomRangeAWhile.build(rect.top, rect.bottom, time);
-		caculateCommonHandle.c_rotation=StaticValue.build(0);
-		caculateCommonHandle.c_scale=TimeLoop2.build(time,1, MathCommonAlg.randomFloat(.2f, .9f),1);
-		caculateCommonHandle.c_alpha = TimeLoop2.build(time,255, 0, 1);
-		bitmapShape.setCaculateCommonHandle(caculateCommonHandle);
-		bitmapShape.setStartOffset(MathCommonAlg.rangeRandom(startOffsetTime, startOffsetTime+1000));
-		bitmapShape.setDuration(MathCommonAlg.rangeRandom(duration, duration+500));
-	}
-	
 }

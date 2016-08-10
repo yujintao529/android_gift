@@ -7,6 +7,75 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="8" />
 
-
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".ApiLaunch"
+            android:label="launch">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ShowAct2"
+            android:label="ShowAct2">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ShowAct1"
+            android:label="ShowAct1">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ShowAct3"
+            android:label="ShowAct3">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ShowAct4"
+            android:label="ShowAct4">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ShowAct5"
+            android:label="ShowAct5">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ShowAct6"
+            android:label="ShowAct6">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ShowAct7"
+            android:label="ShowAct7">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+    </application>
 
 </manifest>

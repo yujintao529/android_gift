@@ -16,7 +16,7 @@ public class RandomRangeAWhile extends RandomRange {
      * @param y
      * @param last
      */
-    private RandomRangeAWhile(int b, int y, float last) {
+    private RandomRangeAWhile(int b, int y, int last) {
         super(b, y);
         if (last <= 0) {
             throw new IllegalArgumentException("last must not liiter 0");
@@ -42,14 +42,7 @@ public class RandomRangeAWhile extends RandomRange {
         return curValue;
     }
 
-    /**
-     * @param b 起始值
-     * @param y 最大值
-     * @param time 单位是秒
-     * @return
-     * @return: RandomRange
-    */
-    public static RandomRange build(int b, int y, float time) {
+    public static RandomRange build(int b, int y, int time) {
         return new RandomRangeAWhile(b, y, time);
 
     }

@@ -25,5 +25,5 @@ public interface BitmapOnDrawListener {
 	 * @param timeDifference
 	 * @return: boolean 返回true的话,
 	*/
-	boolean draw(Canvas canvas, Matrix matrix, Paint paint,Bitmap bitmap, int timeDifference);
+	public abstract boolean draw(Canvas canvas, Matrix matrix, Paint paint,Bitmap bitmap, int timeDifference);
 }

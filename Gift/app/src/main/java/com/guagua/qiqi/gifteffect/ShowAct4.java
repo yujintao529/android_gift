@@ -23,7 +23,7 @@ public class ShowAct4 extends Activity {
     	SceneInfo info=new SceneInfo();
     	info.sender="郁金涛";
     	info.receiver="god";
-    	info.num=99;
+    	info.num=9999;
     	info.effectLevel=4;
     	Bitmap bitmap=BitmapFactory.decodeResource(getResources(), R.drawable.gg_anchor_level11);
     	info.setGiftBitmap(bitmap);

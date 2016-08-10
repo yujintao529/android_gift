@@ -10,7 +10,7 @@ import android.view.View;
 /**
  * Created by jintao on 2015/7/2.
  */
-public class ShowAct7 extends Activity {
+public class ShowAct2 extends Activity {
     private BaseSurfaceView baseSurfaceView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +23,8 @@ public class ShowAct7 extends Activity {
     	SceneInfo info=new SceneInfo();
     	info.sender="郁金涛";
     	info.receiver="god";
-    	info.num=2999;
-    	info.effectLevel=7;
+    	info.num=9999;
+    	info.effectLevel=2;
     	Bitmap bitmap=BitmapFactory.decodeResource(getResources(), R.drawable.gg_anchor_level11);
     	info.setGiftBitmap(bitmap);
     	baseSurfaceView.addScene(info);

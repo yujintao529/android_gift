@@ -33,14 +33,13 @@ public class Level1Scene extends IScene implements BitmapOnDrawListener {
 		super(context, number, width, height);
 		clipPath = new Path();
 		rect = new Rect();
-		setmLastTime(2000);
+		setmLastTime(10000);
 	}
 
 	public Level1Scene(Context context, int width, int height) {
 		this(context, 50, width, height);
 		clipPath = new Path();
 		rect = new Rect();
-		setmLastTime(2000);
 	}
 
 	private void initData() {
@@ -61,8 +60,10 @@ public class Level1Scene extends IScene implements BitmapOnDrawListener {
 			bitmap = BitmapUtils.decodeBitmap(mContext, R.drawable.level_1_bg_front);
 			if (bitmap != null) {
 				bitmapShape = new BitmapShape(bitmap, this);
+				//测试使用
+//				bitmapShape.setBitmapOnDrawListener(this);
 
-				ElfFactory.endowBackgroupBack(bitmapShape, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2, 0f,.1f);
+				ElfFactory.endowBackgroupBack(bitmapShape, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2, 0.2f,.4f);
 				addShape(bitmapShape);
 			}
 			addShape(bg);
@@ -73,6 +74,8 @@ public class Level1Scene extends IScene implements BitmapOnDrawListener {
 			if (bitmap != null) {
 				bitmapShape = new BitmapShape(bitmap, this);
 				ElfFactory.endowBackgroupAlpha(bitmapShape, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2);
+				//测试使用
+//				bitmapShape.setBitmapOnDrawListener(this);
 				addShape(bitmapShape);
 			}
 		}
@@ -82,22 +85,21 @@ public class Level1Scene extends IScene implements BitmapOnDrawListener {
 		if (bitmap != null) {
 			bitmapShape = new BitmapShape(bitmap, this);
 			ElfFactory.endowLevel1YellowLine(bitmapShape, rect.left + PXUtils.dp2px(mContext, 5), rect.top, rect);
-			bitmapShape.setBitmapOnDrawListener(this);
 			addShape(bitmapShape);
 		}
 
 		//初始化星星个数,星星不在剪裁范围里,所以不要设置setBitmapOnDrawListener
-		bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.level_3_s);
+		bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.level_1_s);
 		if (bitmap != null) {
 			for (int i = 0; i < 1; i++) {
 				bitmapShape = new BitmapShape(bitmap, this);
-				ElfFactory.endowLevelStar(bitmapShape, rect.left + PXUtils.dp2px(mContext, 15 + i * 10), rect.top - PXUtils.dp2px(mContext, 4),
+				ElfFactory.endowLevelStar(bitmapShape, rect.left + PXUtils.dp2px(mContext, 10 + i * 10), rect.top - PXUtils.dp2px(mContext, 5),
 						mContext);
 				addShape(bitmapShape);
 			}
 		}
 		if (sceneInfo != null) {
-			GiftInfoElement element = new GiftInfoElement(this, sceneInfo,mBGRect);
+			GiftInfoElement element = new GiftInfoElement(this, sceneInfo);
 			addShape(element);
 		}
 		bitmap = null;
@@ -128,11 +130,12 @@ public class Level1Scene extends IScene implements BitmapOnDrawListener {
 		super.onAfterShow();
 	}
 
+	private Paint testPaint = new Paint();
 
 	@Override
 	public boolean draw(Canvas canvas, Matrix matrix, Paint paint, Bitmap bitmap, int timeDifference) {
 		canvas.clipPath(clipPath);
-		return true;
+		return false;
 	}
 
 	@Override

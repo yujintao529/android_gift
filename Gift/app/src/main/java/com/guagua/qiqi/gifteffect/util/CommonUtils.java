@@ -1,6 +1,8 @@
 package com.guagua.qiqi.gifteffect.util;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Matrix;
 import android.util.DisplayMetrics;
 
 /*************************************************************************************

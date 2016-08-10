@@ -1,5 +1,8 @@
 package com.guagua.qiqi.gifteffect;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -12,13 +15,9 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.guagua.qiqi.gifteffect.animation.AnimationWrapper;
 import com.guagua.qiqi.gifteffect.animation.algorithm.CaculationModel;
 import com.guagua.qiqi.gifteffect.animation.algorithm.RangeCommon;
 import com.guagua.qiqi.gifteffect.elements.IScene;
-import com.guagua.qiqi.gifteffect.elements.ISignt;
-import com.guagua.qiqi.gifteffect.elements.SceneProxy;
-import com.guagua.qiqi.gifteffect.elements.level.Level10Scene;
 import com.guagua.qiqi.gifteffect.elements.level.Level1Scene;
 import com.guagua.qiqi.gifteffect.elements.level.Level2Scene;
 import com.guagua.qiqi.gifteffect.elements.level.Level3Scene;
@@ -26,12 +25,7 @@ import com.guagua.qiqi.gifteffect.elements.level.Level4Scene;
 import com.guagua.qiqi.gifteffect.elements.level.Level5Scene;
 import com.guagua.qiqi.gifteffect.elements.level.Level6Scene;
 import com.guagua.qiqi.gifteffect.elements.level.Level7Scene;
-import com.guagua.qiqi.gifteffect.elements.level.Level8Scene;
-import com.guagua.qiqi.gifteffect.elements.level.Level9Scene;
 import com.guagua.qiqi.gifteffect.util.Logger;
-
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by yujintao on 15/7/1.
@@ -42,7 +36,7 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	private Thread mSurfaceThread;
 	private BlockingQueue<SceneInfo> list;
 
-	private ISignt mCurSignt;
+	private IScene mCurScene;
 
 	private Bitmap mBoard;
 	private Canvas mCanvas;
@@ -56,7 +50,7 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	private CaculationModel caculationModel;//出场动画
 	private CaculationModel alpha;
 
-	//能够确定的surfaceview的大小
+	//所使用的画板的大小
 	private int mWidth;
 	private int mheight;
 
@@ -76,7 +70,9 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 		clear = new PorterDuffXfermode(Mode.CLEAR);
 		src = new PorterDuffXfermode(Mode.SRC);
 		matrix = new Matrix();
-		alpha = RangeCommon.build(255, 0, 400);
+		alpha = RangeCommon.build(255, 0, 1000);
+
+		//paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));  
 	}
 
 	public void onStop() {
@@ -91,9 +87,12 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	public void surfaceCreated(SurfaceHolder holder) {
 
 		mWidth = getWidth();
-		mheight = getHeight();
-		
+		mheight = getHeight() / 3;
 		Logger.d("surfaceCreated width:" + mWidth + " height:" + getHeight());
+		caculationModel = RangeCommon.build(getHeight(), 20, 500);
+		mBoard = Bitmap.createBitmap(mWidth, mheight, Bitmap.Config.ARGB_8888);
+		Logger.d("borad view width " + getWidth() + " height " + mheight);
+		mCanvas = new Canvas(mBoard);
 		mSurfaceThread = new Thread(this, "giftThread");
 		mSurfaceThread.start();
 		mIsRunning = true;
@@ -108,10 +107,17 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		if ((mWidth != width || mheight != height) && height > 0 && width > 0) {
-			mWidth = width;
-			mheight = height;
-			Logger.d("surfaceChanged width:" + mWidth + " height:" + mheight);
+		if (mWidth != getWidth() || mheight != getHeight() / 3) {
+			mWidth = getWidth();
+			mheight = getHeight() / 3;
+			Logger.d("surfaceChanged width:" + mWidth + " height:" + getHeight());
+			caculationModel = RangeCommon.build(getHeight(), 20, 500);
+			if(mBoard!=null&&!mBoard.isRecycled()){
+				mBoard.isRecycled();
+			}
+			mBoard = Bitmap.createBitmap(mWidth, mheight, Bitmap.Config.ARGB_8888);
+			Logger.d("borad view width " + getWidth() + " height " + mheight);
+			mCanvas = new Canvas(mBoard);
 		}
 	}
 
@@ -123,17 +129,17 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	}
 
 	/**
-	 * while 是否还有场景 没有则进行休眠
-	 * scene 展现
-	 * while 场景是否播放完毕
-	 * 重新绘制场景达到动画效果
-	 * Thread sleep休眠-播放帧数
-	 * end 场景播放完毕
-	 * if 是否需要释放资源
-	 * 释放资源
-	 * scene end
+	 *  while 是否还有场景 没有则进行休眠
+	 *      scene 展现
+	 *      while 场景是否播放完毕
+	 *          重新绘制场景达到动画效果
+	 *          Thread sleep休眠-播放帧数
+	 *      end 场景播放完毕
+	 *      if 是否需要释放资源
+	 *         释放资源
+	 *      scene end
 	 * end
-	 * <p/>
+	 *
 	 * 线程结束
 	 */
 
@@ -143,25 +149,29 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 		Logger.d("动画线程开始执行。。。" + Thread.currentThread().getName() + "-" + Thread.currentThread().getId());
 		while (mIsRunning) {
 			try {
-				mCurSignt = take();
-				Logger.d("开始播放场景" + mCurSignt);
-				if (!mCurSignt.readyForPlay()) {
-					Logger.d("ready for play false " + mCurSignt);
-					mCurSignt = null;
-					continue;
-				}
-				while (!mCurSignt.isPlayEnd()) {
+				mCurScene = take();
+				Logger.d("开始播放场景" + mCurScene);
+				mCurScene.readyForShow(mCanvas);
+				final long time = System.currentTimeMillis();
+				while (!mCurScene.isEnd()) {
 					try {
+						paint.setXfermode(clear);
+						mCanvas.drawPaint(paint);
+						paint.setXfermode(src);
+						mCurScene.draw(mCanvas);
+						long diff = System.currentTimeMillis() - time;
+						matrix.setTranslate(0, caculationModel.caculate((int) diff));
 						canvas = surfaceHolder.lockCanvas();
 						paint.setXfermode(clear);
 						canvas.drawPaint(paint);
 						paint.setXfermode(src);
-						mCurSignt.play(canvas);
+						canvas.drawBitmap(mBoard, matrix, paint);
 //						SystemClock.sleep(10);//帧数50
 					}
 					catch (Exception e) {
-						Logger.d("绘制场景出现错误" + mCurSignt, e);
-						mCurSignt.playEnd();
+						Logger.d("绘制场景出现错误" + mCurScene, e);
+						//手动结束iScene
+						mCurScene.end();
 
 					}
 					finally {
@@ -170,8 +180,39 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
 					}
 				}
-				mCurSignt.destroy();
-				Logger.d("场景播放完成  " + mCurSignt);
+				mCurScene.destroy();
+				Logger.d("场景播放完成  " + mCurScene);
+				Logger.d("开始执行场景退出动画..." + mCurScene);
+				//死亡动画
+				final long die = System.currentTimeMillis();
+				boolean dead = false;
+				while (!dead) {
+					try {
+						long diff = System.currentTimeMillis() - die;
+						int value = (int) alpha.caculate((int) diff);
+						paint.setAlpha(value);
+						canvas = surfaceHolder.lockCanvas();
+						paint.setXfermode(clear);
+						canvas.drawPaint(paint);
+						paint.setXfermode(src);
+						canvas.drawBitmap(mBoard, matrix, paint);
+						if (value == 0) {
+							dead = true;
+						}
+					}
+					catch (Exception e) {
+						Logger.d("场景退出动画发生异常, 结束退出过场动画" + mCurScene, e);
+						dead = true;
+					}
+					finally {
+						if (canvas != null)
+							surfaceHolder.unlockCanvasAndPost(canvas);
+					}
+
+				}
+				//恢复画笔的alpha值
+				paint.setAlpha(255);
+				//
 				try {
 					//清除surface
 					canvas = surfaceHolder.lockCanvas();
@@ -180,24 +221,21 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 						canvas.drawPaint(paint);
 					}
 				}
-				catch (Exception e) {
-					Logger.d("清楚surface试图，保留绘制线程" + mCurSignt, e);
-				}
 				finally {
 					if (canvas != null)
 						surfaceHolder.unlockCanvasAndPost(canvas);
 				}
 			}
 			catch (InterruptedException e) {
-				Logger.d(" 发生线程打断异常，终止绘制线程  " + mCurSignt, e);
+				Logger.d(" 发生线程打断异常，终止绘制线程  " + mCurScene, e);
 				mIsRunning = false;
 			}
 			catch (Exception e) {
-				Logger.d("当前场景发生错误，退出当前场景，保留绘制线程" + mCurSignt, e);
+				Logger.d("当前场景发生错误，退出当前场景，保留绘制线程" + mCurScene, e);
 			}
 			finally {
-				Logger.d("场景动画彻底结束..." + mCurSignt + " thread status " + mIsRunning);
-				mCurSignt = null;//结束赋值null。
+				Logger.d("场景动画彻底结束..." + mCurScene + " thread status " + mIsRunning);
+				mCurScene = null;//结束赋值null。
 			}
 			if (playSceneEndListener != null) {
 				playSceneEndListener.onPlayEnd();
@@ -207,84 +245,40 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
 	}
 
-	private ISignt take() throws InterruptedException {
+	private IScene take() throws InterruptedException {
 		return build(list.take());
 	}
 
-	public ISignt build(SceneInfo sceneInfo) {
-		IScene iScene;
-		SceneProxy sceneProxy = null;
-		AnimationWrapper begin=new AnimationWrapper();
+	public IScene build(SceneInfo sceneInfo) {
+		IScene iScene = null;
 		switch (sceneInfo.effectLevel) {
 			case 1:
-				iScene = new Level1Scene(getContext(), mWidth, mheight / 6);
-				sceneProxy = new SceneProxy(iScene);
-				begin.setXYAnimation(null, RangeCommon.build(mheight, mheight / 2, 500));
-//				begin.setXYAnimation(null, StaticValue.build( mheight / 2));
-//				begin.setAlphaAnimation(RangeCommon.build(0, 255, 500));
-				sceneProxy.setmBeginAnimation(begin);
+				iScene = new Level1Scene(getContext(), mWidth, mheight);
 				break;
 			case 2:
-				iScene = new Level2Scene(getContext(), mWidth, mheight / 6);
-				sceneProxy = new SceneProxy(iScene);
-				begin.setXYAnimation(null, RangeCommon.build(mheight, mheight / 2, 300));
-				sceneProxy.setmBeginAnimation(begin);
+				iScene = new Level2Scene(getContext(), mWidth, mheight);
 				break;
 			case 3:
-				iScene = new Level3Scene(getContext(), mWidth, mheight / 6);
-				sceneProxy = new SceneProxy(iScene);
-				begin.setXYAnimation(null, RangeCommon.build(mheight, mheight / 2, 300));
-				sceneProxy.setmBeginAnimation(begin);
+				iScene = new Level3Scene(getContext(), mWidth, mheight);
 				break;
 			case 4:
-				iScene = new Level4Scene(getContext(), mWidth, mheight / 6);
-				sceneProxy = new SceneProxy(iScene);
-				begin.setXYAnimation(null, RangeCommon.build(mheight, mheight / 2, 300));
-				sceneProxy.setmBeginAnimation(begin);
+				iScene = new Level4Scene(getContext(), mWidth, mheight);
 				break;
 			case 5:
-				iScene = new Level5Scene(getContext(), mWidth, mheight / 6);
-				sceneProxy = new SceneProxy(iScene);
-				begin.setXYAnimation(null, RangeCommon.build(mheight, mheight / 2, 300));
-				sceneProxy.setmBeginAnimation(begin);
+				iScene = new Level5Scene(getContext(), mWidth, mheight);
 				break;
 			case 6:
-				iScene = new Level6Scene(getContext(), mWidth, mheight / 6);
-				sceneProxy = new SceneProxy(iScene);
-				begin.setXYAnimation(null, RangeCommon.build(mheight, mheight / 2, 300));
-				sceneProxy.setmBeginAnimation(begin);
+				iScene = new Level6Scene(getContext(), mWidth, mheight);
 				break;
 			case 7:
-				iScene = new Level7Scene(getContext(), mWidth, mheight / 6);
-				sceneProxy = new SceneProxy(iScene);
-				begin.setXYAnimation(null, RangeCommon.build(mheight, mheight / 2, 300));
-				sceneProxy.setmBeginAnimation(begin);
-				break;
-			case 8:
-				iScene = new Level8Scene(getContext(), mWidth, mheight);
-				sceneProxy = new SceneProxy(iScene);
-				sceneProxy.setmBeginAnimation(begin);
-				sceneProxy.setBGColor(0x99000000);
-				begin.setAlphaAnimation(RangeCommon.build(0, 255, 500));
-				break;
-			case 9:
-				iScene = new Level9Scene(getContext(), mWidth, mheight);
-				sceneProxy = new SceneProxy(iScene);
-				sceneProxy.setmBeginAnimation(begin);
-				sceneProxy.setBGColor(0x99000000);
-				begin.setAlphaAnimation(RangeCommon.build(0, 255, 500));
-				break;
-			case 10:
 			default:
-				iScene = new Level10Scene(getContext(), mWidth, mheight);
-				sceneProxy = new SceneProxy(iScene);
-				sceneProxy.setBGColor(0x99000000);
-				sceneProxy.setmBeginAnimation(begin);
-				begin.setAlphaAnimation(RangeCommon.build(0, 255, 500));
+				iScene = new Level7Scene(getContext(), mWidth, mheight);
 				break;
+
 		}
+
 		iScene.setSceneInfo(sceneInfo);
-		return sceneProxy;
+		return iScene;
 	}
 
 	public OnPlaySceneEndListener getPlaySceneEndListener() {

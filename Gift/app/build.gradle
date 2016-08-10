@@ -1,11 +1,11 @@
-apply plugin: 'com.android.library'
+apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 14
     buildToolsVersion "23.0.0 rc2"
 
     defaultConfig {
-//        applicationId "com.guagua.qiqi.gifteffect"
+        applicationId "com.guagua.qiqi.gifteffect"
         minSdkVersion 8
         targetSdkVersion 8
         versionCode 1

@@ -4,8 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.Rect;
@@ -33,14 +35,13 @@ public class Level2Scene extends IScene implements BitmapOnDrawListener {
 		super(context, number, width, height);
 		clipPath = new Path();
 		rect = new Rect();
-		setmLastTime(1500);
+		setmLastTime(2500);
 	}
 
 	public Level2Scene(Context context, int width, int height) {
 		this(context, 50, width, height);
 		clipPath = new Path();
 		rect = new Rect();
-		setmLastTime(1500);
 	}
 
 	private void initData() {
@@ -61,7 +62,10 @@ public class Level2Scene extends IScene implements BitmapOnDrawListener {
 			bitmap = BitmapUtils.decodeBitmap(mContext, R.drawable.level_2_bg_front);
 			if (bitmap != null) {
 				bitmapShape = new BitmapShape(bitmap, this);
-				ElfFactory.endowBackgroupBack(bitmapShape, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2, 0f,.1f );
+				//测试使用
+//				bitmapShape.setBitmapOnDrawListener(this);
+
+				ElfFactory.endowBackgroupBack(bitmapShape, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2, .2f,.4f );
 				addShape(bitmapShape);
 			}
 			addShape(bg);
@@ -82,14 +86,12 @@ public class Level2Scene extends IScene implements BitmapOnDrawListener {
 		if (bitmap != null) {
 			bitmapShape = new BitmapShape(bitmap, this);
 			ElfFactory.endowLevelCommonLine(bitmapShape, rect.left, rect.top - PXUtils.dp2px(mContext, 2), rect);
-			bitmapShape.setBitmapOnDrawListener(this);
 			addShape(bitmapShape);
 		}
 		bitmap = BitmapUtils.decodeBitmap(mContext, R.drawable.level_2_white_line);
 		if (bitmap != null) {
 			bitmapShape = new BitmapShape(bitmap, this);
 			ElfFactory.endowLevelCommonLine(bitmapShape, rect.left, rect.top - PXUtils.dp2px(mContext, 2), rect);
-			bitmapShape.setBitmapOnDrawListener(this);
 			addShape(bitmapShape);
 		}
 
@@ -99,7 +101,6 @@ public class Level2Scene extends IScene implements BitmapOnDrawListener {
 			for (int i = 0; i < 4; i++) {
 				bitmapShape = new BitmapShape(bitmap, this);
 				ElfFactory.endowLevel2Texture(bitmapShape, MathCommonAlg.randomFloat(0.2f, 0.4f), rect);
-				bitmapShape.setBitmapOnDrawListener(this);
 				addShape(bitmapShape);
 			}
 		}
@@ -109,23 +110,22 @@ public class Level2Scene extends IScene implements BitmapOnDrawListener {
 			for (int i = 0; i < 5; i++) {
 				bitmapShape = new BitmapShape(bitmap, this);
 				ElfFactory.endowLevel2Texture2(bitmapShape, MathCommonAlg.randomFloat(0.2f, 0.4f), rect);
-				bitmapShape.setBitmapOnDrawListener(this);
 				addShape(bitmapShape);
 			}
 		}
 		//初始化星星
-		bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.level_3_s);
+		bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.level_1_s);
 		if (bitmap != null) {
 			for (int i = 0; i < 2; i++) {
 				bitmapShape = new BitmapShape(bitmap, this);
-				ElfFactory.endowLevelStar(bitmapShape, rect.left + PXUtils.dp2px(mContext, 14 + i * 10), rect.top - PXUtils.dp2px(mContext, 3),
+				ElfFactory.endowLevelStar(bitmapShape, rect.left + PXUtils.dp2px(mContext, 10 + i * 10), rect.top - PXUtils.dp2px(mContext, 5),
 						mContext);
 				addShape(bitmapShape);
 			}
 		}
 
 		if (sceneInfo != null) {
-			GiftInfoElement element = new GiftInfoElement(this, sceneInfo,mBGRect);
+			GiftInfoElement element = new GiftInfoElement(this, sceneInfo);
 			addShape(element);
 		}
 
@@ -155,11 +155,21 @@ public class Level2Scene extends IScene implements BitmapOnDrawListener {
 		super.onAfterShow();
 	}
 
+	Paint testPaint = new Paint();
 
 	@Override
 	public boolean draw(Canvas canvas, Matrix matrix, Paint paint, Bitmap bitmap, int timeDifference) {
-		canvas.clipPath(clipPath);
-		return true;
+		testPaint.setColor(Color.RED);
+		testPaint.setStyle(Style.STROKE);
+		paint.setStrokeWidth(3);
+		paint.setAntiAlias(true);
+		paint.setDither(true);
+		canvas.save();
+//		canvas.drawRect(mBGRect, testPaint);
+//		canvas.drawPath(clipPath, testPaint);
+		canvas.drawBitmap(bitmap, matrix, paint);
+		canvas.restore();
+		return false;
 	}
 
 	@Override

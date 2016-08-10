@@ -34,10 +34,6 @@ import java.util.List;
  */
 public class GiftInfoElement extends Element {
 
-    public static final byte ROLL_MODE_ONE=1;
-    public static final byte ROLL_MODE_TWO=2;
-
-
     public static final String SONG = "  送  ";
     public static final String UNIT = "  个  ";
     public static final int INFO_TEXT_SIZE = 30;
@@ -191,6 +187,7 @@ public class GiftInfoElement extends Element {
 //		for (int i = mNumberBitmaps.size() - 1, j = 0, size = mNumberBitmaps.size(); i >= 0; i--) {
 //			canvas.drawBitmap(mNumberBitmaps.get(i), numberRect.left + j++ * numberWidth, numberRect.top, testPaint);
 //		}
+
         canvas.restore();
         canvas.translate(numberRect.width(), 0);
         //单位
@@ -202,21 +199,17 @@ public class GiftInfoElement extends Element {
         canvas.restore();
     }
 
-
     @Override
     protected void destroy() {
         super.destroy();
         BitmapUtils.destroy(mGiftBitmap);
-        for(int i=0;i<10;i++){
-
-        }
     }
 
 
     /**
      * 滚动数字封装对象.
      */
-    private final class GunNumber {
+    private class GunNumber {
         public float top;
         public int index;
         public int standard;
@@ -248,9 +241,7 @@ public class GiftInfoElement extends Element {
         //滚动计算的公式
 //        CaculationModel mCalModel;
         Caculation caculation;
-        float lastValue;
-
-        int lastNumber = 9;
+        private float lastValue;
 
         public GunNumberGroup(float left, float top, int type) {
             gunNumbers[0] = new GunNumber(0, top, numberheight * 3);
@@ -258,13 +249,8 @@ public class GiftInfoElement extends Element {
             gunNumbers[2] = new GunNumber(2, top, numberheight * 3);
             this.left = left;
             this.top = top;
-            caculation = new SpeicalCalModel(type, 2 - type * 0.2f);
+            caculation = new SpeicalCalModel(type, 2);
         }
-
-        public void setLastNumber(int lastNumber) {
-            this.lastNumber = lastNumber;
-        }
-
 
         public void doDraw(Canvas canvas, Paint paint, int timeDifference) {
             final float value = caculation.caculate(timeDifference);
@@ -273,13 +259,13 @@ public class GiftInfoElement extends Element {
             }
             lastValue = value;
         }
-
     }
 
 
-
-
-
+    /**
+     * 定制一个计算过程
+     * 9999 4×1000  个位
+     */
     public class SpeicalCalModel implements Caculation {
 
         public static final int GEWEI = 0;
@@ -291,7 +277,7 @@ public class GiftInfoElement extends Element {
         private float rat;
         private float count;
 
-        public SpeicalCalModel(int type, float time) {
+        public SpeicalCalModel(int type, int time) {
             switch (type) {
                 case GEWEI:
                     count = 39 * numberheight;
@@ -325,11 +311,8 @@ public class GiftInfoElement extends Element {
         }
     }
 
-
     public interface Caculation {
         float caculate(int time);
     }
-
-
 
 }

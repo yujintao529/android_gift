@@ -18,13 +18,6 @@ public class RangeCommon extends CaculationModel{
 		dir=start<end;
 		
 	}
-	/**
-	 * @param start
-	 * @param end
-	 * @param k  单位是豪秒啊啊啊啊啊
-	 * @return
-	 * @return: CaculationModel
-	*/
 	public static CaculationModel build(float start,float end,float k){
 		return new RangeCommon(start, end, k);
 	}
