@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.Rect;
@@ -33,12 +32,14 @@ public class Level5Scene extends IScene implements BitmapOnDrawListener {
 		super(context, number, width, height);
 		clipPath = new Path();
 		rect = new Rect();
+		setmLastTime(4000);
 	}
 
 	public Level5Scene(Context context, int width, int height) {
 		this(context, 50, width, height);
 		clipPath = new Path();
 		rect = new Rect();
+		setmLastTime(4000);
 	}
 
 	private void initData() {
@@ -60,9 +61,8 @@ public class Level5Scene extends IScene implements BitmapOnDrawListener {
 			if (bitmap != null) {
 				bitmapShape = new BitmapShape(bitmap, this);
 				//测试使用
-//				bitmapShape.setBitmapOnDrawListener(this);
 
-				ElfFactory.endowBackgroupBack(bitmapShape, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2, -0.2f, 0);
+				ElfFactory.endowBackgroupBack(bitmapShape, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2, -.1f,0f);
 				addShape(bitmapShape);
 			}
 			addShape(bg);
@@ -88,10 +88,10 @@ public class Level5Scene extends IScene implements BitmapOnDrawListener {
 				addShape(bitmapShape);
 			}
 		}
-		bitmap = BitmapUtils.decodeBitmap(mContext, R.drawable.level_5_yellow_line );
+		bitmap = BitmapUtils.decodeBitmap(mContext, R.drawable.level_5_yellow_line);
 		if (bitmap != null) {
 			bitmapShape = new BitmapShape(bitmap, this);
-			ElfFactory.endowLevelCommonLine(bitmapShape, rect.left, rect.top-PXUtils.dp2px(mContext, 7), rect);
+			ElfFactory.endowLevelCommonLine(bitmapShape, rect.left, rect.top - PXUtils.dp2px(mContext, 6), rect);
 			addShape(bitmapShape);
 		}
 
@@ -113,12 +113,7 @@ public class Level5Scene extends IScene implements BitmapOnDrawListener {
 				BitmapShape lightBottomShape = new BitmapShape(lightBottom, this);
 				BitmapShape star1Shape = new BitmapShape(star, this);
 				BitmapShape star2Shape;
-//				if (MathCommonAlg.randomBool()) {
-//					star2Shape = new BitmapShape(star, this);
-//				}
-//				else {
-					star2Shape = new BitmapShape(starYellow, this);
-//				}
+				star2Shape = new BitmapShape(starYellow, this);
 
 				ElfFactory.endowLevel5Light(lightShape, lightBottomShape, star1Shape, star2Shape, rect, i, mContext);
 				addShape(lightShape);
@@ -127,20 +122,19 @@ public class Level5Scene extends IScene implements BitmapOnDrawListener {
 				addShape(star2Shape);
 			}
 		}
-//		
-		
+
 		bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.level_5_s);
 		if (bitmap != null) {
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < 5; i++) {
 				bitmapShape = new BitmapShape(bitmap, this);
-				ElfFactory.endowLevelStar(bitmapShape, rect.left + PXUtils.dp2px(mContext, 10 + i * 10), rect.top - PXUtils.dp2px(mContext, 5),
+				ElfFactory.endowLevelStar(bitmapShape, rect.left + PXUtils.dp2px(mContext, 12 + i * 10), rect.top - PXUtils.dp2px(mContext, 3),
 						mContext);
 				addShape(bitmapShape);
 			}
 		}
 
 		if (sceneInfo != null) {
-			GiftInfoElement element = new GiftInfoElement(this, sceneInfo);
+			GiftInfoElement element = new GiftInfoElement(this, sceneInfo,mBGRect);
 			addShape(element);
 		}
 
@@ -153,7 +147,6 @@ public class Level5Scene extends IScene implements BitmapOnDrawListener {
 	*/
 	private void initClipPathAndRect() {
 		rect.set(mBGRect);
-		rect.top = rect.top + PXUtils.dp2px(mContext, 5);
 		clipPath.addRoundRect(new RectF(rect),
 				new float[] { PXUtils.dp2px(mContext, 12), PXUtils.dp2px(mContext, 14), PXUtils.dp2px(mContext, 12), PXUtils.dp2px(mContext, 12),
 						PXUtils.dp2px(mContext, 40), PXUtils.dp2px(mContext, 40), PXUtils.dp2px(mContext, 36), PXUtils.dp2px(mContext, 28) },
@@ -171,21 +164,11 @@ public class Level5Scene extends IScene implements BitmapOnDrawListener {
 		super.onAfterShow();
 	}
 
-	Paint testPaint = new Paint();
-
 	@Override
 	public boolean draw(Canvas canvas, Matrix matrix, Paint paint, Bitmap bitmap, int timeDifference) {
-		testPaint.setColor(Color.RED);
-		testPaint.setStyle(Style.STROKE);
-		paint.setStrokeWidth(3);
-		paint.setAntiAlias(true);
-		paint.setDither(true);
-		canvas.save();
-		canvas.drawRect(mBGRect, testPaint);
-		canvas.drawPath(clipPath, testPaint);
-		canvas.drawBitmap(bitmap, matrix, paint);
-		canvas.restore();
-		return false;
+		
+		canvas.clipPath(clipPath);
+		return true;
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package com.guagua.qiqi.gifteffect.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 
@@ -19,6 +18,10 @@ public class BitmapUtils {
 
 	public static Bitmap decodeBitmap(Context context, int id) {
 		return BitmapFactory.decodeResource(context.getResources(), id);
+	}
+
+	public static Bitmap craeteBitmap(int width,int height){
+		return Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888);
 	}
 	public static Bitmap createBitmap(Bitmap bitmap,int width,int height,int density){
 		float scaX = width*1f / bitmap.getWidth();
@@ -61,4 +64,5 @@ public class BitmapUtils {
 		}
 		return result;
 	}
+	
 }

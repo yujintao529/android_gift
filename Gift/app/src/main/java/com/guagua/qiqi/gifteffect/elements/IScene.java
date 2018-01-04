@@ -5,15 +5,15 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 
 import com.guagua.qiqi.gifteffect.SceneInfo;
-import com.guagua.qiqi.gifteffect.util.Logger;
 
 /**
  * Created by jintao on 2015/7/2.
  * 场景几类
  */
-public abstract class IScene {
+public abstract class IScene implements ISignt{
     public static final String TAG = IScene.class.getSimpleName();
     public static final int DEFAULT_SHOW_LAST_TIME=6000;
+    public static final int LAST_FOREVER=-1;//一直播放
 
     public static final int EMPTY=1;
     public static final int BEGIN=2;
@@ -31,7 +31,6 @@ public abstract class IScene {
     private int mIndex;
     //元素数量
     private int maxNumber;
-
 
     private int mStatus;
     //Context
@@ -72,20 +71,34 @@ public abstract class IScene {
     protected final Rect getBGRect(){
     	return new Rect(mBGRect);
     }
-    
-    
+
+    @Override
+    public boolean isPlayEnd() {
+         return mStatus == END;
+    }
+
+    @Override
+    public boolean readyForPlay() {
+        mStartTime = System.currentTimeMillis();
+        mStatus=BEGIN;
+        onBeforeShow();
+        return true;
+    }
+
     public IScene(Context context, int width, int height) {
        this(context,width,height,50);
     }
 
-    public final void readyForShow(Canvas canvas) {
-        mStartTime = System.currentTimeMillis();
-        mStatus=BEGIN;
-        onBeforeShow();
-
+    @Override
+    public void playEnd() {
+        mStatus=END;
     }
 
-    public final void draw(Canvas canvas) {
+
+    public int getlastTime(){
+        return mLastTime;
+    }
+    public final void play(Canvas canvas) {
         int i = 0;
         Element element;
         final int timeSpan = (int) (System.currentTimeMillis() - mStartTime);
@@ -98,7 +111,7 @@ public abstract class IScene {
                 break;
             }
         }
-        if(timeSpan>=mLastTime){
+        if(timeSpan>=mLastTime&&mLastTime!=LAST_FOREVER){
             mStatus=END;
             onAfterShow();
         }
@@ -114,13 +127,8 @@ public abstract class IScene {
     protected void onAfterShow(){
     	
     }
-    
-    public void end(){
-        mStatus=END;
-    }
-    public boolean isEnd() {
-        return mStatus == END;
-    }
+
+
     public void destroy(){
     	for(int index=0;index<mIndex;index++){
     		mElements[index].destroy();
@@ -146,5 +154,7 @@ public abstract class IScene {
 	public String toString() {
 		return "IScene [sceneInfo=" + sceneInfo + "]";
 	}
+
+
     
 }

@@ -27,7 +27,7 @@ public class StandarCal extends CaculationModel {
 
     /**
      * @param s_x  初始值
-     * @param t_x  速率 但是妙
+     * @param t_x  速率 px/s
      * @return: CaculationModel
     */
     public static CaculationModel build(float s_x, float t_x){

@@ -5,10 +5,10 @@
 
 
     <com.guagua.qiqi.gifteffect.BaseSurfaceView
-        android:layout_width="500dp"
+        android:layout_width="match_parent"
         android:layout_centerInParent="true"
         android:id="@+id/surface"
-        android:layout_height="300dp" />
+        android:layout_height="match_parent" />
 
 
     <LinearLayout

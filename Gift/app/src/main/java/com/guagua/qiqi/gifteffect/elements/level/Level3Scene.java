@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.Rect;
@@ -32,13 +31,14 @@ public class Level3Scene extends IScene implements BitmapOnDrawListener {
 		super(context, number, width, height);
 		clipPath = new Path();
 		rect = new Rect();
-		setmLastTime(3000);
+		setmLastTime(2000);
 	}
 
 	public Level3Scene(Context context, int width, int height) {
 		this(context, 50, width, height);
 		clipPath = new Path();
 		rect = new Rect();
+		setmLastTime(2000);
 	}
 
 	private void initData() {
@@ -60,8 +60,7 @@ public class Level3Scene extends IScene implements BitmapOnDrawListener {
 			if (bitmap != null) {
 				bitmapShape = new BitmapShape(bitmap, this);
 				//测试使用
-//				bitmapShape.setBitmapOnDrawListener(this);
-				ElfFactory.endowBackgroupBack(bitmapShape, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2, .2f,.4f);
+				ElfFactory.endowBackgroupBack(bitmapShape, (mWidth - bitmap.getWidth()) / 2, (mHeight - bitmap.getHeight()) / 2, 0f,.1f);
 				addShape(bitmapShape);
 			}
 			addShape(bg);
@@ -72,12 +71,14 @@ public class Level3Scene extends IScene implements BitmapOnDrawListener {
 		if (bitmap != null) {
 			bitmapShape = new BitmapShape(bitmap, this);
 			ElfFactory.endowLevelCommonLine(bitmapShape, rect.left, rect.top , rect);
+			bitmapShape.setBitmapOnDrawListener(this);
 			addShape(bitmapShape);
 		}
 		bitmap = BitmapUtils.decodeBitmap(mContext, R.drawable.level_1_yellow_line );
 		if (bitmap != null) {
 			bitmapShape = new BitmapShape(bitmap, this);
 			ElfFactory.endowLevelCommonLine(bitmapShape, rect.left, rect.top , rect);
+			bitmapShape.setBitmapOnDrawListener(this);
 			addShape(bitmapShape);
 		}
 		
@@ -98,7 +99,7 @@ public class Level3Scene extends IScene implements BitmapOnDrawListener {
 		if (bitmap != null) {
 			for (int i = 0; i < 3; i++) {
 				bitmapShape = new BitmapShape(bitmap, this);
-				ElfFactory.endowLevelStar(bitmapShape, rect.left + PXUtils.dp2px(mContext, 10 + i * 10), rect.top - PXUtils.dp2px(mContext, 5),
+				ElfFactory.endowLevelStar(bitmapShape, rect.left + PXUtils.dp2px(mContext, 10 + i * 10), rect.top - PXUtils.dp2px(mContext, 3),
 						mContext);
 				addShape(bitmapShape);
 			}
@@ -106,7 +107,7 @@ public class Level3Scene extends IScene implements BitmapOnDrawListener {
 		
 		
 		if (sceneInfo != null) {
-			GiftInfoElement element = new GiftInfoElement(this, sceneInfo);
+			GiftInfoElement element = new GiftInfoElement(this, sceneInfo,mBGRect);
 			addShape(element);
 		}
 
@@ -115,10 +116,6 @@ public class Level3Scene extends IScene implements BitmapOnDrawListener {
 
 	private void initClipPathAndRect() {
 		rect.set(mBGRect);
-		rect.top = rect.top + PXUtils.dp2px(mContext, 18);
-		rect.left = rect.left + PXUtils.dp2px(mContext, 10);
-		rect.bottom = rect.bottom - PXUtils.dp2px(mContext, 14);
-		rect.right = rect.right - PXUtils.dp2px(mContext, 6);
 		clipPath.addRoundRect(new RectF(rect),
 				new float[] { PXUtils.dp2px(mContext, 10), PXUtils.dp2px(mContext, 10), PXUtils.dp2px(mContext, 10), PXUtils.dp2px(mContext, 10),
 						PXUtils.dp2px(mContext, 30), PXUtils.dp2px(mContext, 40), PXUtils.dp2px(mContext, 40), PXUtils.dp2px(mContext, 40) },
@@ -136,23 +133,10 @@ public class Level3Scene extends IScene implements BitmapOnDrawListener {
 		super.onAfterShow();
 	}
 
-	Paint testPaint = new Paint();
-
 	@Override
 	public boolean draw(Canvas canvas, Matrix matrix, Paint paint, Bitmap bitmap, int timeDifference) {
-		testPaint.setColor(Color.RED);
-		testPaint.setStyle(Style.STROKE);
-		paint.setStrokeWidth(3);
-		paint.setAntiAlias(true);
-		paint.setDither(true);
-		canvas.save();
-//		canvas.clipPath(clipPath);
-//		canvas.drawPath(clipPath, paint);
-		canvas.drawRect(mBGRect, testPaint);
-		canvas.drawPath(clipPath, testPaint);
-		canvas.drawBitmap(bitmap, matrix, paint);
-		canvas.restore();
-		return false;
+		canvas.clipPath(clipPath);
+		return true;
 	}
 
 	@Override

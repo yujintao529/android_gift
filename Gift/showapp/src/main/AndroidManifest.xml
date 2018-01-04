@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.guagua.qiqi" >
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+
+        <activity
+            android:name=".gifteffect.ApiLaunch"
+            android:label="launch">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".gifteffect.ShowAct2"
+            android:label="ShowAct2">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".gifteffect.ShowAct1"
+            android:label="ShowAct1">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".gifteffect.ShowAct3"
+            android:label="ShowAct3">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".gifteffect.ShowAct4"
+            android:label="ShowAct4">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".gifteffect.ShowAct5"
+            android:label="ShowAct5">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".gifteffect.ShowAct6"
+            android:label="ShowAct6">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".gifteffect.ShowAct7"
+            android:label="ShowAct7">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".gifteffect.ShowAct8"
+            android:label="ShowAct8">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.guagua.qiqi.CATEGORY_SAMPLES" />
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>
